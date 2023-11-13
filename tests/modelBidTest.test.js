@@ -43,7 +43,7 @@ describe("Bid model", () => {
       bidderId: 987654321,
       bidAmount: 100,
       bidder: "bidder name",
-      bidTime: new Date().now,
+      bidTime: new Date(),
     });
     let error = null;
     try {
@@ -60,7 +60,7 @@ describe("Bid model", () => {
       auctionId: 1234567890,
       bidAmount: 100,
       bidder: "bidder name",
-      bidTime: new Date().now,
+      bidTime: new Date(),
     });
     let error = null;
     try {
@@ -77,7 +77,7 @@ describe("Bid model", () => {
       auctionId: 1234567890,
       bidderId: 987654321,
       bidder: "bidder name",
-      bidTime: new Date().now,
+      bidTime: new Date(),
     });
     let error = null;
     try {
@@ -94,7 +94,7 @@ describe("Bid model", () => {
       auctionId: 1234567890,
       bidderId: 987654321,
       bidAmount: 100,
-      bidTime: new Date().now,
+      bidTime: new Date(),
     });
     let error = null;
     try {
