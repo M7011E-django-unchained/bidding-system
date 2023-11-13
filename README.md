@@ -18,4 +18,4 @@ npm start
 This will install all required packages and then run the program.
 
 # Note
-This is not supposed to be a full system for handling auctions or similar, just handling bids and biding in another larger project. In other words, this system alone is not doing anything useful.
+This is not supposed to be a full system for handling auctions or similar, just handling bids and bidding in another larger project. In other words, this system alone is not doing anything useful.
