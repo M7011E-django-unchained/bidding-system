@@ -14,7 +14,7 @@ jobs:
       - name: Git checkout
         env:
           CI: true
-          TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+          TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }} >> .env
         uses: actions/checkout@v3
 
       - name: Use Node.js ${{ matrix.node-version }}
