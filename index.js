@@ -25,6 +25,12 @@ app.use(express.json());
 
 app.use("/api/v1", routes);
 
-app.listen(3000, () => {
-  console.log(`Server Started at http://localhost:3000/api/v1`);
-});
+if (process.env.NODE_ENV == "production") {
+  app.listen(3000, () => {
+    console.log(`Server Started at http://localhost:5000/api/v1`);
+  });
+} else {
+  app.listen(3000, () => {
+    console.log(`Server Started at http://localhost:3000/api/v1`);
+  });
+}
