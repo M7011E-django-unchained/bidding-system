@@ -23,8 +23,8 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.json());
 
-app.use("/api", routes);
+app.use("/api/v1", routes);
 
 app.listen(3000, () => {
-  console.log(`Server Started at ${3000}`);
+  console.log(`Server Started at http://localhost:3000/api/v1`);
 });

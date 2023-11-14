@@ -3,7 +3,7 @@ const Model = require("../models/bid");
 const router = express.Router();
 
 //Create general bid
-router.post("/post", async (req, res) => {
+router.post("/createBid", async (req, res) => {
   const data = new Model({
     auctionId: req.body.auctionId,
     bidder: req.body.bidder,
@@ -21,7 +21,7 @@ router.post("/post", async (req, res) => {
 });
 
 //Get all Bids
-router.get("/getAll", async (req, res) => {
+router.get("/getAllBids", async (req, res) => {
   try {
     const data = await Model.find();
     res.json(data);
@@ -31,7 +31,7 @@ router.get("/getAll", async (req, res) => {
 });
 
 //Get bid by ID
-router.get("/getOne/:id", async (req, res) => {
+router.get("/getOneBid/:id", async (req, res) => {
   try {
     const data = await Model.findById(req.params.id);
     res.json(data);
@@ -41,7 +41,7 @@ router.get("/getOne/:id", async (req, res) => {
 });
 
 //Update bid by ID
-router.patch("/update/:id", async (req, res) => {
+router.patch("/updateOneBid/:id", async (req, res) => {
   try {
     const id = req.params.id;
     const updatedData = req.body;
@@ -56,7 +56,7 @@ router.patch("/update/:id", async (req, res) => {
 });
 
 //Delete bid by ID
-router.delete("/delete/:id", async (req, res) => {
+router.delete("/deleteOneBid/:id", async (req, res) => {
   try {
     const id = req.params.id;
     const data = await Model.findByIdAndDelete(id);
