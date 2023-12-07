@@ -1,36 +1,19 @@
+const mongoose = require("mongoose");
+const app = require("./app");
+
 require("dotenv").config();
 
-const routes = require("./routes/routes");
-
-const express = require("express");
-const mongoose = require("mongoose");
 const mongoString = process.env.DATABASE_URL;
+const PORT = process.env.PORT || 5000;
 
-mongoose.connect(mongoString);
-const database = mongoose.connection;
-
-database.on("error", (error) => {
-  console.log(error);
-});
-
-database.once("connected", () => {
-  console.log("Database Connected");
-});
-
-const app = express();
-
-app.use(express.urlencoded({ extended: true }));
-
-app.use(express.json());
-
-app.use("/api/v1", routes);
-
-if (process.env.NODE_ENV == "production") {
-  app.listen(3000, () => {
-    console.log(`Server Started at http://localhost:5000/api/v1`);
+/* Connecting to the database and then starting the server. */
+mongoose
+  .connect(mongoString)
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server Started at http://localhost:${PORT}/api/v1`);
+    });
+  })
+  .catch((err) => {
+    console.log(err);
   });
-} else {
-  app.listen(3000, () => {
-    console.log(`Server Started at http://localhost:3000/api/v1`);
-  });
-}

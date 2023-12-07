@@ -1,10 +1,10 @@
 const express = require("express");
-const Model = require("../models/bid");
+const Bid = require("../models/bid");
 const router = express.Router();
 
 //Create general bid
 router.post("/createBid", async (req, res) => {
-  const data = new Model({
+  const data = new Bid({
     auctionId: req.body.auctionId,
     bidder: req.body.bidder,
     bidderId: req.body.bidderId,
@@ -14,7 +14,7 @@ router.post("/createBid", async (req, res) => {
 
   try {
     const dataToSave = await data.save();
-    res.status(200).json(dataToSave);
+    res.status(201).json(dataToSave);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -23,8 +23,8 @@ router.post("/createBid", async (req, res) => {
 //Get all Bids
 router.get("/getAllBids", async (req, res) => {
   try {
-    const data = await Model.find();
-    res.json(data);
+    const data = await Bid.find();
+    res.status(200).json(data);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -33,10 +33,10 @@ router.get("/getAllBids", async (req, res) => {
 //Get all Bids by auctionId
 router.get("/getAllBidsByAuctionId/:auctionId", async (req, res) => {
   try {
-    const data = await Model.find({
+    const data = await Bid.find({
       auctionId: req.params.auctionId,
     });
-    res.json(data);
+    res.status(200).json(data);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -45,10 +45,10 @@ router.get("/getAllBidsByAuctionId/:auctionId", async (req, res) => {
 //Get all Bids by bidderId
 router.get("/getAllBidsByBidderId/:bidderId", async (req, res) => {
   try {
-    const data = await Model.find({
+    const data = await Bid.find({
       bidderId: req.params.bidderId,
     });
-    res.json(data);
+    res.status(200).json(data);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -57,11 +57,11 @@ router.get("/getAllBidsByBidderId/:bidderId", async (req, res) => {
 //Get all Bids by bidderId and auctionId
 router.get("/getAllBids/:bidderId/:auctionId", async (req, res) => {
   try {
-    const data = await Model.find({
+    const data = await Bid.find({
       bidderId: req.params.bidderId,
       auctionId: req.params.auctionId,
     });
-    res.json(data);
+    res.status(200).json(data);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -70,8 +70,8 @@ router.get("/getAllBids/:bidderId/:auctionId", async (req, res) => {
 //Get bid by ID
 router.get("/getOneBid/:id", async (req, res) => {
   try {
-    const data = await Model.findById(req.params.id);
-    res.json(data);
+    const data = await Bid.findById(req.params.id);
+    res.status(200).json(data);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -80,10 +80,10 @@ router.get("/getOneBid/:id", async (req, res) => {
 //Get winner by auctionId, i.e the highest bidder
 router.get("/getWinnerByAuctionId/:auctionId", async (req, res) => {
   try {
-    const data = await Model.findOne({ auctionId: req.params.auctionId }).sort({
+    const data = await Bid.findOne({ auctionId: req.params.auctionId }).sort({
       bidAmount: -1,
     });
-    res.json(data);
+    res.status(200).json(data);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -94,11 +94,8 @@ router.patch("/updateOneBid/:id", async (req, res) => {
   try {
     const id = req.params.id;
     const updatedData = req.body;
-    const options = { new: true };
-
-    const result = await Model.findByIdAndUpdate(id, updatedData, options);
-
-    res.send(result);
+    const data = await Bid.findByIdAndUpdate(id, updatedData, { new: true });
+    res.status(200).json(data);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -108,8 +105,8 @@ router.patch("/updateOneBid/:id", async (req, res) => {
 router.delete("/deleteOneBid/:id", async (req, res) => {
   try {
     const id = req.params.id;
-    const data = await Model.findByIdAndDelete(id);
-    res.send(`Bid with id = ${data._id} has been deleted..`);
+    const data = await Bid.findByIdAndDelete(id);
+    res.status(200).json(data);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -119,10 +116,8 @@ router.delete("/deleteOneBid/:id", async (req, res) => {
 router.delete("/deleteAllBidsByAuctionId/:auctionId", async (req, res) => {
   try {
     const auctionId = req.params.auctionId;
-    const data = await Model.deleteMany(auctionId);
-    res.send(
-      `All bids with on auction with auctionId = ${data.auctionId} has been deleted..`
-    );
+    const data = await Bid.deleteMany({ auctionId: auctionId });
+    res.status(200).json(data);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
