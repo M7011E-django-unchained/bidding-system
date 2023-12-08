@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "cross-env NODE_ENV=test jest --testTimeout=10000 --detectOpenHandles",
+    "test": "cross-env NODE_ENV=test jest --testTimeout=10000 --detectOpenHandles --coverage",
     "start": "nodemon index.js",
     "prod": "node index.js"
   },
