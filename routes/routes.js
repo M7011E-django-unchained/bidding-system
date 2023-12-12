@@ -27,9 +27,13 @@ router.post("/createBid", async (req, res) => {
       return res.status(201).json(dataToSave);
     }
 
+    if (isNaN(data.bidAmount)) {
+      return res.status(400).json({ message: "Invalid bid amount type" });
+    }
+
     if (data.bidAmount > highestBid.bidAmount) {
       const dataToSave = await data.save();
-      res.status(201).json(dataToSave);
+      return res.status(201).json(dataToSave);
     } else {
       res.status(400).json({
         message:
@@ -110,6 +114,11 @@ router.get("/getWinnerByAuctionId/:auctionId", async (req, res) => {
 
     const endtime = new Date(req.body.endTime);
 
+    // if endtime is not a date, return error
+    if (!isValidDate(endtime)) {
+      return res.status(400).json({ message: "Invalid Date" });
+    }
+
     var winner;
     for (let i = 0; i < bids.length; i++) {
       if (compareTime(bids[i].bidTime, endtime)) {
@@ -118,7 +127,7 @@ router.get("/getWinnerByAuctionId/:auctionId", async (req, res) => {
       }
     }
 
-    res.status(200).json({ message: "No winner" });
+    res.status(400).json({ message: "Auction not over yet" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -158,20 +167,12 @@ router.delete("/deleteAllBidsByAuctionId/:auctionId", async (req, res) => {
   }
 });
 
-// async function fetchAuction(auctionId) {
-//   try {
-//     const response = await axios.get(
-//       `http://127.0.0.1:${process.env.DJANGO_API_PORT}/api/1/auction/${auctionId}`
-//     );
-//     // Process the data received in the response
-//     return response.data;
-//   } catch (error) {
-//     console.error(error);
-//   }
-// }
-
 function compareTime(date1, date2) {
   return date1.getTime() < date2.getTime();
+}
+
+function isValidDate(d) {
+  return d instanceof Date && !isNaN(d);
 }
 
 module.exports = router;

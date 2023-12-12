@@ -47,6 +47,31 @@ describe(`POST /createBid`, () => {
     expect(response.status).toBe(400);
     expect(response.body).toBeDefined();
   });
+
+  it(`should return an error if the auctionId is invalid`, async () => {
+    const response = await request(app).post(`${baseUrl}/createBid`).send({
+      auctionId: "invalid",
+      bidder: `bidder name`,
+      bidderId: 987654321,
+      bidAmount: 100,
+      bidTime: new Date(),
+    });
+    expect(response.status).toBe(400);
+    expect(response.body).toBeDefined();
+  });
+
+  it(`should not create a new bid if the bidAmount is lower than existings bids`, async () => {
+    const time = new Date();
+    const response = await request(app).post(`${baseUrl}/createBid`).send({
+      auctionId: 34,
+      bidder: `bidder name`,
+      bidderId: 987654321,
+      bidAmount: 1,
+      bidTime: time,
+    });
+    expect(response.status).toBe(400);
+    expect(response.body).toBeDefined();
+  });
 });
 
 describe(`GET /getAllBids`, () => {
@@ -163,10 +188,29 @@ describe(`GET /getOneBid/:id`, () => {
 
 describe(`GET /getWinnerByAuctionId/:auctionId`, () => {
   it(`should return the highest bidder by auctionId`, async () => {
-    const response = await request(app).get(
-      `${baseUrl}/getWinnerByAuctionId/1234567890`
-    );
+    const response = await request(app)
+      .get(`${baseUrl}/getWinnerByAuctionId/34`)
+      .send({ endTime: new Date().toISOString() });
     expect(response.status).toBe(200);
+    expect(response.body).toBeDefined();
+  });
+
+  it(`should return error if the auction is not over yet`, async () => {
+    var date = new Date();
+    date.setDate(date.getDate() - 100000);
+
+    const response = await request(app)
+      .get(`${baseUrl}/getWinnerByAuctionId/34`)
+      .send({ endTime: date });
+    expect(response.status).toBe(400);
+    expect(response.body).toBeDefined();
+  });
+
+  it(`should return error id endTime is not in an accepted format or type`, async () => {
+    const response = await request(app)
+      .get(`${baseUrl}/getWinnerByAuctionId/34`)
+      .send({ endTime: "invalid" });
+    expect(response.status).toBe(400);
     expect(response.body).toBeDefined();
   });
 
@@ -223,7 +267,7 @@ describe("DELETE /deleteOneBid/:id", () => {
       auctionId: 1234567890,
       bidder: `bidder name`,
       bidderId: 987654321,
-      bidAmount: 100,
+      bidAmount: 100000,
       bidTime: new Date(),
     });
     expect(bid.status).toBe(201);
