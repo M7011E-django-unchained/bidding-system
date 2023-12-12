@@ -24,7 +24,7 @@ describe(`POST /createBid`, () => {
       auctionId: 1234567890,
       bidder: `bidder name`,
       bidderId: 987654321,
-      bidAmount: 100,
+      bidAmount: 10000,
       bidTime: time,
     });
     expect(response.status).toBe(201);
@@ -32,7 +32,7 @@ describe(`POST /createBid`, () => {
     expect(response.body.auctionId).toStrictEqual(1234567890);
     expect(response.body.bidder).toStrictEqual(`bidder name`);
     expect(response.body.bidderId).toStrictEqual(987654321);
-    expect(response.body.bidAmount).toStrictEqual(100);
+    expect(response.body.bidAmount).toStrictEqual(10000);
     expect(Date(response.body.bidTime)).toStrictEqual(Date(time));
   });
 
