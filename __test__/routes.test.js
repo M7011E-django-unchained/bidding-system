@@ -25,7 +25,7 @@ describe(`POST /createBid`, () => {
       bidder: `bidder name`,
       bidderId: 987654321,
       bidAmount: 10000,
-      bidTime: time,
+      bidTime: time.toISOString(),
     });
     expect(response.status).toBe(201);
     expect(response.body).toBeDefined();
@@ -42,7 +42,7 @@ describe(`POST /createBid`, () => {
       bidder: `bidder name`,
       bidderId: 987654321,
       bidAmount: `invalid`,
-      bidTime: new Date(),
+      bidTime: new Date().toISOString(),
     });
     expect(response.status).toBe(400);
     expect(response.body).toBeDefined();
@@ -54,7 +54,7 @@ describe(`POST /createBid`, () => {
       bidder: `bidder name`,
       bidderId: 987654321,
       bidAmount: 100,
-      bidTime: new Date(),
+      bidTime: new Date().toISOString(),
     });
     expect(response.status).toBe(400);
     expect(response.body).toBeDefined();
