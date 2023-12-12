@@ -1,4 +1,7 @@
+require("dotenv").config();
+
 const express = require("express");
+const axios = require("axios");
 const Bid = require("../models/bid");
 const router = express.Router();
 
@@ -13,8 +16,27 @@ router.post("/createBid", async (req, res) => {
   });
 
   try {
-    const dataToSave = await data.save();
-    res.status(201).json(dataToSave);
+    const highestBid = await Bid.findOne({
+      auctionId: data.auctionId,
+    }).sort({
+      bidAmount: -1,
+    });
+
+    if (highestBid === null) {
+      const dataToSave = await data.save();
+      return res.status(201).json(dataToSave);
+    }
+
+    if (data.bidAmount > highestBid.bidAmount) {
+      const dataToSave = await data.save();
+      res.status(201).json(dataToSave);
+    } else {
+      res.status(400).json({
+        message:
+          "Bid amount is too low, current highest bid is " +
+          highestBid.bidAmount,
+      });
+    }
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -36,7 +58,7 @@ router.get("/getAllBidsByAuctionId/:auctionId", async (req, res) => {
     const data = await Bid.find({
       auctionId: req.params.auctionId,
     });
-    res.status(200).json(data);
+    return res.status(200).json(data);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -79,11 +101,24 @@ router.get("/getOneBid/:id", async (req, res) => {
 
 //Get winner by auctionId, i.e the highest bidder
 router.get("/getWinnerByAuctionId/:auctionId", async (req, res) => {
+  // Get the highest bid by auctionId
+  // Check that the time of the bid is before the auction end time
   try {
-    const data = await Bid.findOne({ auctionId: req.params.auctionId }).sort({
+    const bids = await Bid.find({ auctionId: req.params.auctionId }).sort({
       bidAmount: -1,
     });
-    res.status(200).json(data);
+
+    const endtime = new Date(req.body.endTime);
+
+    var winner;
+    for (let i = 0; i < bids.length; i++) {
+      if (compareTime(bids[i].bidTime, endtime)) {
+        winner = bids[i];
+        return res.status(200).json(winner);
+      }
+    }
+
+    res.status(200).json({ message: "No winner" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -122,5 +157,21 @@ router.delete("/deleteAllBidsByAuctionId/:auctionId", async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
+
+// async function fetchAuction(auctionId) {
+//   try {
+//     const response = await axios.get(
+//       `http://127.0.0.1:${process.env.DJANGO_API_PORT}/api/1/auction/${auctionId}`
+//     );
+//     // Process the data received in the response
+//     return response.data;
+//   } catch (error) {
+//     console.error(error);
+//   }
+// }
+
+function compareTime(date1, date2) {
+  return date1.getTime() < date2.getTime();
+}
 
 module.exports = router;
