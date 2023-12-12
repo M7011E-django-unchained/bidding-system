@@ -6,6 +6,7 @@ const app = require(`../app`);
 const Bid = require(`../models/bid`);
 const mongoString = process.env.TEST_DATABASE_URL;
 const baseUrl = `/api/v1`;
+const id = Math.floor(Math.random() * 1000000000);
 
 /* Connecting to the database before each test. */
 beforeEach(async () => {
@@ -21,19 +22,27 @@ describe(`POST /createBid`, () => {
   it(`should create a new bid`, async () => {
     const time = new Date();
     const response = await request(app).post(`${baseUrl}/createBid`).send({
-      auctionId: 1234567890,
+      auctionId: id,
       bidder: `bidder name`,
-      bidderId: 987654321,
-      bidAmount: 10000,
-      bidTime: time.toISOString(),
+      bidderId: 1,
+      bidAmount: 500,
+      bidTime: time,
     });
+
+    const delete_res = await request(app).delete(
+      `${baseUrl}/deleteAllBidsByAuctionId/${id}}`
+    );
+
     expect(response.status).toBe(201);
     expect(response.body).toBeDefined();
-    expect(response.body.auctionId).toStrictEqual(1234567890);
+    expect(response.body.auctionId).toStrictEqual(id);
     expect(response.body.bidder).toStrictEqual(`bidder name`);
-    expect(response.body.bidderId).toStrictEqual(987654321);
-    expect(response.body.bidAmount).toStrictEqual(10000);
+    expect(response.body.bidderId).toStrictEqual(1);
+    expect(response.body.bidAmount).toStrictEqual(500);
     expect(Date(response.body.bidTime)).toStrictEqual(Date(time));
+
+    // expect(delete_res.status).toBe(200);
+    // expect(delete_res.body).toBeDefined();
   });
 
   it(`should return an error if there is a validation error`, async () => {
@@ -42,7 +51,7 @@ describe(`POST /createBid`, () => {
       bidder: `bidder name`,
       bidderId: 987654321,
       bidAmount: `invalid`,
-      bidTime: new Date().toISOString(),
+      bidTime: new Date(),
     });
     expect(response.status).toBe(400);
     expect(response.body).toBeDefined();
@@ -54,7 +63,7 @@ describe(`POST /createBid`, () => {
       bidder: `bidder name`,
       bidderId: 987654321,
       bidAmount: 100,
-      bidTime: new Date().toISOString(),
+      bidTime: new Date(),
     });
     expect(response.status).toBe(400);
     expect(response.body).toBeDefined();
@@ -68,6 +77,18 @@ describe(`POST /createBid`, () => {
       bidderId: 987654321,
       bidAmount: 1,
       bidTime: time,
+    });
+    expect(response.status).toBe(400);
+    expect(response.body).toBeDefined();
+  });
+
+  it(`should not create a new bid if the bidAmount is Not a Number`, async () => {
+    const response = await request(app).post(`${baseUrl}/createBid`).send({
+      auctionId: 1234567890,
+      bidder: `bidder name`,
+      bidderId: 1,
+      bidAmount: "invalid",
+      bidTime: new Date(),
     });
     expect(response.status).toBe(400);
     expect(response.body).toBeDefined();
@@ -310,5 +331,13 @@ describe("DELETE /deleteAllBidsByAuctionId/:auctionId", () => {
     expect(response.body).toBeDefined();
 
     await mongoose.connect(mongoString);
+  });
+
+  it("should delete all bids with random testing AuctionId", async () => {
+    const response = await request(app).delete(
+      `${baseUrl}/deleteAllBidsByAuctionId/${id}`
+    );
+    expect(response.status).toBe(200);
+    expect(response.body).toBeDefined();
   });
 });

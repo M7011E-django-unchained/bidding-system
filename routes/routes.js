@@ -16,6 +16,10 @@ router.post("/createBid", async (req, res) => {
   });
 
   try {
+    if (isNaN(data.bidAmount)) {
+      return res.status(400).json({ message: "Invalid bid amount type" });
+    }
+
     const highestBid = await Bid.findOne({
       auctionId: data.auctionId,
     }).sort({
@@ -25,10 +29,6 @@ router.post("/createBid", async (req, res) => {
     if (highestBid === null) {
       const dataToSave = await data.save();
       return res.status(201).json(dataToSave);
-    }
-
-    if (isNaN(data.bidAmount)) {
-      return res.status(400).json({ message: "Invalid bid amount type" });
     }
 
     if (data.bidAmount > highestBid.bidAmount) {
