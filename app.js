@@ -12,6 +12,11 @@ app.get("/", (req, res) => {
   res.status(200).json({ alive: "True" });
 });
 
+app.use((req, res, next) => {
+  console.log("Run auth middleware");
+  next();
+});
+
 app.use("/api/v1", routes);
 
 module.exports = app;
