@@ -11,12 +11,20 @@ jobs:
         mongodb-version: ["6.0"]
 
     steps:
+      # Checkout the Node.js project
+      - name: Checkout main repo
+        uses: actions/checkout@v3
+        with:
+          path: main
+
+      # Checkout the Django project
       - name: Checkout trading_api repo
         uses: actions/checkout@v3
         with:
           repository: M7011E-django-unchained-org/trading_api
           path: "./trading_api"
 
+      # Set up Python
       - name: Update
         run: sudo apt update
         working-directory: ./trading_api
@@ -25,21 +33,17 @@ jobs:
         run: sudo apt install python3-pip
         working-directory: ./trading_api
 
-      - name: Install requirements
+      - name: Install Django project requirements
         run: pip install -r requirements.txt
         working-directory: ./trading_api
 
-      - name: Execute linting and tests
+      - name: Execute Django project linting and tests
         env:
           DJANGO_SETTINGS_MODULE: trading_api.settings
         run: flake8 && python manage.py test
         working-directory: ./trading_api
 
-      - name: Checkout main repo
-        uses: actions/checkout@v3
-        # with:
-        #   path: main
-
+      # Set up Node.js
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
@@ -54,7 +58,12 @@ jobs:
         run: |
           touch .env
           echo TEST_DATABASE_URL=${{ secrets.MONGO_TEST_DATABASE_URL }} >> .env
+        working-directory: ./main
 
-      - run: npm install
+      - name: Install Node.js dependencies
+        run: npm install
+        working-directory: ./main
 
-      - run: npm test
+      - name: Run Node.js tests
+        run: npm test
+        working-directory: ./main
