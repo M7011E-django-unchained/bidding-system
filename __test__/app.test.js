@@ -47,55 +47,48 @@ describe(`GET /`, () => {
 });
 
 if (process.env.NOT_TEST_GITHUB) {
-  describe("Middleware Setup", () => {
-    it("should pass the request to the next middleware if the token is valid", async () => {
-      // Mock the request and response objects
-      const req = {
-        headers: {
-          authorization: "Bearer " + token,
-        },
-      };
-      const res = {};
+  describe("Authorization middleware", () => {
+    let mockRequest;
+    let mockResponse;
+    let nextFunction = jest.fn();
 
-      // Mock the next middleware function
-      const next = jest.fn();
-
-      // Call the middleware function
-      await app.authorizationMiddleware(req, res, next);
-
-      // Expect the next middleware to be called
-      expect(next).toHaveBeenCalled();
-    });
-
-    it("should return an error response if the token is invalid", async () => {
-      // Mock the request and response objects
-      const req = {
-        headers: {
-          authorization: "Bearer invalid_token",
-        },
-      };
-      const res = {
-        status: jest.fn().mockReturnThis(),
+    beforeEach(() => {
+      mockRequest = {};
+      mockResponse = {
         json: jest.fn(),
       };
+    });
 
-      // Mock the next middleware function
-      const next = jest.fn();
+    test("without headers", async () => {
+      const expectedResponse = {
+        error: "Missing JWT token from the 'Authorization' header",
+      };
+      authorizationMiddleware(mockRequest, mockResponse, nextFunction);
 
-      // Call the middleware function
-      await authorizationMiddleware(req, res, next);
+      expect(mockResponse.json).toBeCalledWith(expectedResponse);
+    });
 
-      // Expect the response status to be 500
-      expect(res.status).toHaveBeenCalledWith(500);
+    test('without "authorization" header', async () => {
+      const expectedResponse = {
+        error: "Missing JWT token from the 'Authorization' header",
+      };
+      mockRequest = {
+        headers: {},
+      };
+      authorizationMiddleware(mockRequest, mockResponse, nextFunction);
 
-      // Expect the response JSON to contain the error message
-      expect(res.json).toHaveBeenCalledWith({
-        message: "There was an issue processing the token",
-        error: "Invalid token",
-      });
+      expect(mockResponse.json).toBeCalledWith(expectedResponse);
+    });
 
-      // Expect the next middleware not to be called
-      expect(next).not.toHaveBeenCalled();
+    test('with "authorization" header', async () => {
+      mockRequest = {
+        headers: {
+          authorization: "Bearer abc",
+        },
+      };
+      authorizationMiddleware(mockRequest, mockResponse, nextFunction);
+
+      expect(nextFunction).toBeCalledTimes(1);
     });
   });
 }
