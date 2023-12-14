@@ -1,5 +1,16 @@
 # API v1 endpoints
 
+Every enpoint requires correct token in the request header formatted as:
+
+```json
+{
+    "headers": {
+        "authorization": "Bearer valid_JWT_token"
+    }
+}
+```
+
+
 ## <http://localhost:5000/api/v1/createBid>
 
 Body
@@ -26,9 +37,8 @@ Body
 
 ## <http://localhost:5000/api/v1/getWinnerByAuctionId/:auctionId>
 
-Body
+Example body
 
-### Body
 
 ```json
 {
@@ -38,7 +48,7 @@ Body
 
 ## <http://localhost:5000/api/v1/updateOneBid/:id>
 
-Body
+Example body
 
 ```json
 {
