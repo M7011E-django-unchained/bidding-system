@@ -10,7 +10,6 @@ Every enpoint requires correct token in the request header formatted as:
 }
 ```
 
-
 ## <http://localhost:5000/api/v1/createBid>
 
 Body
@@ -38,7 +37,6 @@ Body
 ## <http://localhost:5000/api/v1/getWinnerByAuctionId/:auctionId>
 
 Example body
-
 
 ```json
 {
