@@ -1,7 +1,6 @@
 require("dotenv").config();
 
 const express = require("express");
-const axios = require("axios");
 const Bid = require("../models/bid");
 const router = express.Router();
 

@@ -1,4 +1,5 @@
 const express = require("express");
+const axios = require("axios");
 
 const routes = require("./routes/routes");
 
@@ -14,7 +15,29 @@ app.get("/", (req, res) => {
 
 app.use((req, res, next) => {
   console.log("Run auth middleware");
-  next();
+
+  const JWTbearer = req.headers.Authorization || req.headers.authorization;
+
+  try {
+    const requestBody = {
+      token: JWTbearer.split(" ")[1],
+    };
+
+    axios
+      .post("http://127.0.0.1:8000/user/token/verify/", requestBody)
+      .then((response) => {
+        console.log(response.data);
+        next();
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  } catch (error) {
+    res.status(500).json({
+      message: "There was an issue processing the token",
+      error: error.message,
+    });
+  }
 });
 
 app.use("/api/v1", routes);
