@@ -30,26 +30,6 @@ describe(`GET /`, () => {
 });
 
 if (process.env.NOT_TEST_GITHUB) {
-  //   test("Middleware setup, jest with valid token", () => {
-  //     expect(authorizationMiddleware).toBeDefined();
-
-  //     const req = {
-  //       headers: {
-  //         authorization: "Bearer " + token,
-  //       },
-  //     };
-  //     const res = {};
-
-  //     // Mock the next middleware function
-  //     const mockCallback = jest.fn();
-
-  //     // Call the middleware function
-  //     authorizationMiddleware(req, res, mockCallback);
-
-  //     // Expect the next middleware to be called
-  //     expect(mockCallback.mock.calls).toHaveBeenCalled();
-  //   });
-
   describe("Middleware Setup", () => {
     it("should pass the request to the next middleware if the token is valid", async () => {
       // Mock the request and response objects
@@ -65,17 +45,19 @@ if (process.env.NOT_TEST_GITHUB) {
           token = response.data.access;
         })
         .catch((error) => {
-          //   console.error(error);
+          console.error(error);
         });
-
-      console.log(token);
 
       const req = {
         headers: {
           authorization: "Bearer " + token,
+          json: jest.fn(),
         },
       };
-      const res = {};
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      };
 
       // Mock the next middleware function
       const next = jest.fn();
@@ -110,7 +92,7 @@ if (process.env.NOT_TEST_GITHUB) {
 
       // Expect the response JSON to contain the error message
       expect(res.json).toHaveBeenCalledWith({
-        message: "There was an issue processing the token",
+        message: "The format of the token is invalid",
       });
 
       // Expect the next middleware not to be called
