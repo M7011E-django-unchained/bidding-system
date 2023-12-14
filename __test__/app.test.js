@@ -29,7 +29,7 @@ describe(`GET /`, () => {
   });
 });
 
-if (process.env.TEST_ON_GITHUB) {
+if (process.env.TEST_ON_GITHUB == "true") {
   describe("Middleware Setup", () => {
     it("should pass the request to the next middleware if the token is valid", async () => {
       // Mock the request and response objects
