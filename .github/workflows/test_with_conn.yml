@@ -58,6 +58,7 @@ jobs:
         run: |
           touch .env
           echo TEST_DATABASE_URL=${{ secrets.MONGO_TEST_DATABASE_URL }} >> .env
+          echo TEST_ON_GITHUB=true >> .env
         working-directory: ./main
 
       - name: Install Node.js dependencies
