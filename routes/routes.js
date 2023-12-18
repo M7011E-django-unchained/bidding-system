@@ -106,12 +106,22 @@ router.get("/getOneBid/:id", async (req, res) => {
 router.get("/getWinnerByAuctionId/:auctionId", async (req, res) => {
   // Get the highest bid by auctionId
   // Check that the time of the bid is before the auction end time
+  const endtime = new Date(req.body.endTime);
+
+  if (endtime.getTime() < new Date().getTime()) {
+    return res.status(400).json({ message: "Auction not over yet" });
+  }
+
   try {
     const bids = await Bid.find({ auctionId: req.params.auctionId }).sort({
       bidAmount: -1,
     });
 
-    const endtime = new Date(req.body.endTime);
+    if (bids == undefined || bids.length == 0) {
+      res
+        .status(400)
+        .json({ message: "No bids made before auction endtime found" });
+    }
 
     // if endtime is not a date, return error
     if (!isValidDate(endtime)) {
@@ -126,7 +136,9 @@ router.get("/getWinnerByAuctionId/:auctionId", async (req, res) => {
       }
     }
 
-    res.status(400).json({ message: "Auction not over yet" });
+    res
+      .status(400)
+      .json({ message: "No bids made before auction endtime found" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
