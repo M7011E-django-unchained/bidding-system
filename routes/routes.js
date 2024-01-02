@@ -110,7 +110,7 @@ router.get("/getWinnerByAuctionId/:auctionId", async (req, res) => {
   console.log(endtime.getTime());
   console.log("current time: " + new Date().getTime());
 
-  if (endtime.getTime() < new Date().getTime()) {
+  if (endtime.getTime() > new Date().getTime()) {
     return res.status(400).json({ message: "Auction not over yet" });
   }
 
