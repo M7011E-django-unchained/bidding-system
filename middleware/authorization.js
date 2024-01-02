@@ -20,7 +20,6 @@ const authorizationMiddleware = function (req, res, next) {
   const veryfyToken = axios
     .post(url, { token: JWTbearer.split(" ")[1] })
     .then((response, res) => {
-      console.log("authentification successfull");
       next();
     })
     .catch((error) => {
