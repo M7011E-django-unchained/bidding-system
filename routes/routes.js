@@ -107,6 +107,8 @@ router.get("/getWinnerByAuctionId/:auctionId", async (req, res) => {
   // Get the highest bid by auctionId
   // Check that the time of the bid is before the auction end time
   const endtime = new Date(req.body.endTime);
+  console.log(endtime.getTime());
+  console.log("current time: " + new Date().getTime());
 
   if (endtime.getTime() < new Date().getTime()) {
     return res.status(400).json({ message: "Auction not over yet" });

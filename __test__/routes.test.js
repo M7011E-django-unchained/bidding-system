@@ -208,7 +208,7 @@ describe(`GET /getOneBid/:id`, () => {
 describe(`GET /getWinnerByAuctionId/:auctionId`, () => {
   it(`should return the highest bidder by auctionId`, async () => {
     const response = await request(app)
-      .get(`${baseUrl}/getWinnerByAuctionId/34`)
+      .get(`${baseUrl}/getWinnerByAuctionId/2`)
       .send({ endTime: new Date().toISOString() });
     expect(response.status).toBe(200);
     expect(response.body).toBeDefined();
@@ -219,7 +219,7 @@ describe(`GET /getWinnerByAuctionId/:auctionId`, () => {
     date.setDate(date.getDate() - 100000);
 
     const response = await request(app)
-      .get(`${baseUrl}/getWinnerByAuctionId/34`)
+      .get(`${baseUrl}/getWinnerByAuctionId/1`)
       .send({ endTime: date });
     expect(response.status).toBe(400);
     expect(response.body).toBeDefined();
