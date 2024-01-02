@@ -4,7 +4,7 @@ FROM node:16
 RUN npm install -g nodemon
 
 # Create app directory
-WORKDIR /usr/src/app
+WORKDIR /usr/src/bidding-system
 
 # Install app dependencies
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
