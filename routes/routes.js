@@ -96,6 +96,9 @@ router.get("/getAllBids/:bidderId/:auctionId", async (req, res) => {
 router.get("/getOneBid/:id", async (req, res) => {
   try {
     const data = await Bid.findById(req.params.id);
+    if (data == null) {
+      return res.status(404).json({ message: "Cannot find bid" });
+    }
     res.status(200).json(data);
   } catch (error) {
     res.status(500).json({ message: error.message });
